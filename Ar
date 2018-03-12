@@ -1,0 +1,39 @@
+#include <DHT11.h>
+#include "HX711.h"
+HX711 scale(A1, A0);
+float calibration_factor = -7000;  
+int pin=2;    // 연결한 아두이노 디지털 핀 번호
+float Weight = 0;
+DHT11 dht11(pin); 
+void setup()
+{
+   Serial.begin(9600);
+   scale.set_scale(2280.f); 
+   scale.tare();
+}
+
+void loop()
+{
+  int err;
+  float temp, humi;
+  if((err=dht11.read(humi, temp))==0)
+  {
+    Serial.print("temperature:");
+    Serial.print(temp);
+    Serial.print(" humidity:");
+    Serial.print(humi);
+    Serial.print(" reading:");
+    Weight  = scale.get_units();
+
+  Serial.println(Weight, 1);
+  delay(DHT11_RETRY_DELAY); //delay for reread
+  }
+  else
+  {
+    Serial.println();
+    Serial.print("Error No :");
+    Serial.print(err);
+    Serial.println();    
+  }
+
+}
